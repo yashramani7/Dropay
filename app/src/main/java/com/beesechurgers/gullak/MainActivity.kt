@@ -1,35 +1,187 @@
 package com.beesechurgers.gullak
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.FabPosition
+import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import com.beesechurgers.gullak.ui.theme.GullakTheme
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
+import com.beesechurgers.gullak.ui.screen.HomeScreen
+import com.beesechurgers.gullak.ui.theme.*
+import com.beesechurgers.gullak.utils.Prefs
+import com.beesechurgers.gullak.utils.Prefs.getString
+import com.google.firebase.auth.FirebaseAuth
 
+@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
+
+    private enum class Screen { HOME, INVESTMENT }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            GullakTheme(this) {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
+            window.statusBarColor = backgroundColor().toArgb()
+            MainScreen()
+        }
+    }
+
+    @Preview(showBackground = true, showSystemUi = true, name = "MainActivity")
+    @Composable
+    fun MainScreen() {
+        GullakTheme(this) {
+            Scaffold(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = backgroundColor()),
+                contentColor = contentColorFor(backgroundColor = backgroundColor()),
+                topBar = { TopBar() },
+                content = { },
+                floatingActionButton = {
+                    ExtendedFloatingActionButton(
+                        onClick = {
+
+                        },
+                        shape = RoundedCornerShape(24.dp),
+                        modifier = Modifier.wrapContentSize(),
+                        icon = {
+                            Icon(painter = painterResource(id = R.drawable.ic_round_qr_code_scanner_24), "")
+                        },
+                        text = {
+                            Text(
+                                text = "Scan QR",
+                                fontFamily = googleSansFont,
+                                fontWeight = FontWeight.Bold
+                            )
+                        },
+                        containerColor = fabColor(),
+                        contentColor = contentColorFor(backgroundColor = fabColor())
+                    )
+                },
+                isFloatingActionButtonDocked = true,
+                floatingActionButtonPosition = FabPosition.Center,
+                bottomBar = { BottomBar() })
+        }
+    }
+
+    @Composable
+    fun TopBar() {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(Alignment.Top)
+                .background(color = backgroundColor()),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Card(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 8.dp)
+                    .clickable {
+                        Toast
+                            .makeText(this@MainActivity, "Settings", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                    .clip(RoundedCornerShape(8.dp))
+                    .border(1.dp, strokeColor(), RoundedCornerShape(8.dp)), shape = RoundedCornerShape(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Settings, contentDescription = "", modifier = Modifier.padding(8.dp),
+                )
+            }
+
+            Image(
+                painter = rememberImagePainter(
+                    data = getString(
+                        Prefs.USER_PROFILE_PIC_URL, "https://picsum.photos/200"
+                    ),
+                    builder = { transformations(CircleCropTransformation()) }
+                ), contentDescription = "", modifier = Modifier
+                    .size(56.dp)
+                    .align(Alignment.CenterVertically)
+                    .padding(8.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        val auth = FirebaseAuth.getInstance()
+                        if (auth.currentUser != null) {
+                            auth.signOut()
+                            startActivity(Intent(this@MainActivity, LoadingActivity::class.java))
+                            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                            finish()
+                        }
+                    }
+            )
+
+            Card(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(end = 8.dp)
+                    .clickable {
+                        Toast
+                            .makeText(this@MainActivity, "Notifications", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                    .clip(RoundedCornerShape(8.dp))
+                    .border(1.dp, strokeColor(), RoundedCornerShape(8.dp)), shape = RoundedCornerShape(8.dp)
+            ) {
+                Icon(imageVector = Icons.Outlined.Notifications, contentDescription = "", modifier = Modifier.padding(8.dp))
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+    @Composable
+    fun BottomBar() {
+        var selectedItem by rememberSaveable { mutableStateOf(Screen.HOME) }
+        NavigationBar(
+            containerColor = navigationBarColor(this),
+            contentColor = contentColorFor(backgroundColor = navigationBarColor(this))
+        ) {
+            window.navigationBarColor = navigationBarColor(this@MainActivity).toArgb()
+            window.statusBarColor = backgroundColor().toArgb()
+            NavigationBarItem(
+                icon = { Icon(if (selectedItem == Screen.HOME) Icons.Filled.Home else Icons.Outlined.Home, "") },
+                label = { Text(text = "Home", fontFamily = googleSansFont, fontSize = 14.sp, fontWeight = FontWeight.Bold) },
+                selected = selectedItem == Screen.HOME,
+                onClick = { selectedItem = Screen.HOME },
+                alwaysShowLabel = true
+            )
+
+            NavigationBarItem(
+                icon = { Icon(painter = painterResource(id = R.drawable.ic_round_trending_up_24), "") },
+                label = { Text(text = "Investment", fontFamily = googleSansFont, fontSize = 14.sp, fontWeight = FontWeight.Bold) },
+                selected = selectedItem == Screen.INVESTMENT,
+                onClick = { selectedItem = Screen.INVESTMENT },
+                alwaysShowLabel = true
+            )
+        }
+    }
 }
