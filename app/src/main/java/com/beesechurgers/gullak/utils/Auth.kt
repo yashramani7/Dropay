@@ -56,12 +56,11 @@ object Auth {
                     val credential = GoogleAuthProvider.getCredential(tokenID, null)
 
                     FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener { result ->
-                        isLoading.value = false
                         if (result.isSuccessful) {
                             val profilePicUrl = intentCred.profilePictureUri
                             if (profilePicUrl != null) putString(Prefs.USER_PROFILE_PIC_URL, profilePicUrl.toString())
                             putString(Prefs.USER_NAME, intentCred.givenName ?: "Anonymous")
-                            handleUserDB(intentCred.givenName)
+                            handleUserDB(isLoading, intentCred.givenName)
                         }
                     }
                 } catch (e: ApiException) {
@@ -80,16 +79,18 @@ object Auth {
         launcher.launch(IntentSenderRequest.Builder(result.pendingIntent.intentSender).build())
     }
 
-    private fun ComponentActivity.handleUserDB(name: String?) {
+    private fun ComponentActivity.handleUserDB(isLoading: MutableState<Boolean>, name: String?) {
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
             FirebaseAuth.getInstance().signOut()
             Toast.makeText(this, "Couldn't create user, please try again", Toast.LENGTH_SHORT).show()
+            isLoading.value = false
             return
         }
 
         FirebaseDatabase.getInstance().reference.child(DBConst.USER_KEY).get().addOnSuccessListener {
             if (it.hasChild(user.uid)) {
+                isLoading.value = false
                 Toast.makeText(this, "Welcome ${name ?: "Anonymous"} !", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, MainActivity::class.java))
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -107,6 +108,7 @@ object Auth {
                         this[DBConst.INVESTMENTS_KEY] = HashMap<String, Any>().apply { this[DBConst.TOTAL_INVEST_KEY] = 0 }
                     }).addOnSuccessListener {
                         Log.d(TAG, "handleUserDB: Data added")
+                        isLoading.value = false
                         Toast.makeText(this, "Welcome ${name ?: "Anonymous"} !", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this, MainActivity::class.java))
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
