@@ -10,6 +10,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.MutableState
 import com.beesechurgers.gullak.MainActivity
+import com.beesechurgers.gullak.SetupPortfolioActivity
 import com.beesechurgers.gullak.utils.Prefs.putString
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.BeginSignInResult
@@ -105,12 +106,14 @@ object Auth {
                 FirebaseDatabase.getInstance().reference.child(DBConst.DATA_KEY).child(user.uid)
                     .updateChildren(HashMap<String, Any>().apply {
                         this[DBConst.WALLET_KEY] = -1.0
+                        this[DBConst.PERCENTAGE_KEY] = 0f
+                        this[DBConst.RISK_KEY] = 0
                         this[DBConst.INVESTMENTS_KEY] = HashMap<String, Any>().apply { this[DBConst.TOTAL_INVEST_KEY] = 0 }
                     }).addOnSuccessListener {
                         Log.d(TAG, "handleUserDB: Data added")
                         isLoading.value = false
                         Toast.makeText(this, "Welcome ${name ?: "Anonymous"} !", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this, MainActivity::class.java))
+                        startActivity(Intent(this, SetupPortfolioActivity::class.java))
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                         finish()
                     }

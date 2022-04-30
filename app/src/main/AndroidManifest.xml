@@ -37,6 +37,11 @@
             android:name=".PaymentActivity"
             android:exported="false"
             android:theme="@style/Theme.Gullak" />
+        <activity
+            android:name=".SetupPortfolioActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Gullak"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

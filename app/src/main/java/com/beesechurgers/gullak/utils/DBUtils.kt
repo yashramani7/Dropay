@@ -14,6 +14,8 @@ object DBConst {
     const val WALLET_KEY = "Wallet_balance"
     const val INVESTMENTS_KEY = "Investments"
     const val TOTAL_INVEST_KEY = "Total_Invest"
+    const val RISK_KEY = "risk_factor"
+    const val PERCENTAGE_KEY = "percentage_amount"
 }
 
 object DBListeners {
