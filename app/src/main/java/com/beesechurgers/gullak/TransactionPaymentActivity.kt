@@ -3,13 +3,8 @@ package com.beesechurgers.gullak
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,7 +30,6 @@ import com.beesechurgers.gullak.ui.theme.backgroundColor
 import com.beesechurgers.gullak.ui.theme.googleSansFont
 import com.beesechurgers.gullak.ui.theme.monoFont
 import com.beesechurgers.gullak.utils.DBListeners
-import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 class TransactionPaymentActivity : ComponentActivity() {
@@ -113,21 +106,7 @@ class TransactionPaymentActivity : ComponentActivity() {
                                             .padding(bottom = 24.dp, start = 24.dp)
                                     )
 
-                                    var fieldEnabled by rememberSaveable { mutableStateOf(true) }
                                     var amount by rememberSaveable { mutableStateOf(paymentAmount) }
-                                    val upiLauncher = rememberLauncherForActivityResult(
-                                        contract = ActivityResultContracts.StartActivityForResult(),
-                                        onResult = {
-                                            val user = FirebaseAuth.getInstance().currentUser ?: return@rememberLauncherForActivityResult
-                                            val intent = it.data ?: return@rememberLauncherForActivityResult
-
-                                            val extra = intent.extras ?: return@rememberLauncherForActivityResult
-                                            if (!extra.getBoolean("success", false)) {
-                                            }
-
-                                            fieldEnabled = false
-                                        }
-                                    )
                                     OutlinedTextField(
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -183,19 +162,6 @@ class TransactionPaymentActivity : ComponentActivity() {
                                                 )
                                             }
                                         }
-                                    }
-
-
-                                    AnimatedVisibility(
-                                        visible = !fieldEnabled,
-                                        enter = fadeIn(),
-                                        exit = fadeOut(),
-                                        modifier = Modifier
-                                            .padding(16.dp)
-                                            .align(Alignment.CenterHorizontally)
-                                    ) {
-                                        LocalFocusManager.current.clearFocus()
-                                        CircularProgressIndicator()
                                     }
 
                                     OutlinedButton(
