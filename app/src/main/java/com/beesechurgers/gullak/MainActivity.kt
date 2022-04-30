@@ -130,7 +130,7 @@ class MainActivity : ComponentActivity() {
                             .makeText(this@MainActivity, "Settings", Toast.LENGTH_SHORT)
                             .show()
                     }
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(24.dp))
                     .border(1.dp, strokeColor(), RoundedCornerShape(8.dp)), shape = RoundedCornerShape(8.dp)
             ) {
                 Icon(
@@ -169,7 +169,7 @@ class MainActivity : ComponentActivity() {
                             .makeText(this@MainActivity, "Notifications", Toast.LENGTH_SHORT)
                             .show()
                     }
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(24.dp))
                     .border(1.dp, strokeColor(), RoundedCornerShape(8.dp)), shape = RoundedCornerShape(8.dp)
             ) {
                 Icon(imageVector = Icons.Outlined.Notifications, contentDescription = "", modifier = Modifier.padding(8.dp))
