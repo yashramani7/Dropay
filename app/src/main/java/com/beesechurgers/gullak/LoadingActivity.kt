@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +19,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,8 +30,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.beesechurgers.gullak.ui.theme.GullakTheme
 import com.beesechurgers.gullak.ui.theme.backgroundColor
+import com.beesechurgers.gullak.ui.theme.googleSansFont
 import com.beesechurgers.gullak.ui.theme.strokeColor
 import com.beesechurgers.gullak.utils.Auth
 import com.beesechurgers.gullak.utils.Auth.oneTapGoogleSignIn
@@ -78,19 +82,45 @@ class LoadingActivity : ComponentActivity() {
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color = backgroundColor())
+                    .animateContentSize(),
+                color = backgroundColor(),
+                contentColor = contentColorFor(backgroundColor = backgroundColor()),
             ) {
-                Column(
+                Row(
                     Modifier
                         .padding(16.dp)
-                        .fillMaxHeight(), Arrangement.SpaceEvenly
+                        .fillMaxHeight()
                 ) {
-                    Icon(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        painter = painterResource(id = R.drawable.ic_logo_google),
-                        contentDescription = "SignInButton",
-                        tint = Color.Unspecified
-                    )
-                    SignInButton(Modifier.align(Alignment.CenterHorizontally))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.CenterVertically)
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(start = 100.dp, end = 100.dp),
+                            painter = painterResource(id = R.drawable.ic_gullak),
+                            contentDescription = "SignInButton",
+                            tint = Color.Unspecified
+                        )
+
+                        Text(
+                            text = "Welcome to Gullak",
+                            fontFamily = googleSansFont,
+                            fontSize = 24.sp,
+                            color = Color(0xff35b276),
+                            modifier = Modifier
+                                .padding(top = 56.dp)
+                                .align(Alignment.CenterHorizontally)
+                        )
+
+                        SignInButton(
+                            Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(top = 150.dp)
+                        )
+                    }
                 }
             }
         }
