@@ -105,10 +105,19 @@ class PaymentActivity : ComponentActivity() {
                                         contract = ActivityResultContracts.StartActivityForResult(),
                                         onResult = {
                                             val user = FirebaseAuth.getInstance().currentUser ?: return@rememberLauncherForActivityResult
-                                            val data = it.data ?: return@rememberLauncherForActivityResult
+                                            val intent = it.data ?: return@rememberLauncherForActivityResult
 
-                                            val extra = data.extras ?: return@rememberLauncherForActivityResult
-                                            if (!extra.getBoolean("success", false)) return@rememberLauncherForActivityResult
+                                            val extra = intent.extras ?: return@rememberLauncherForActivityResult
+                                            if (!extra.getBoolean("success", false)) {
+                                                Toast.makeText(this@PaymentActivity, "Top up Failed", Toast.LENGTH_SHORT).show()
+                                                startActivity(
+                                                    Intent(
+                                                        this@PaymentActivity,
+                                                        MainActivity::class.java
+                                                    ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                )
+                                                return@rememberLauncherForActivityResult
+                                            }
 
                                             fieldEnabled = false
                                             Handler(mainLooper).postDelayed({
@@ -117,7 +126,12 @@ class PaymentActivity : ComponentActivity() {
                                                         this[DBConst.WALLET_KEY] = amount.toDouble()
                                                     }).addOnSuccessListener {
                                                         Toast.makeText(this@PaymentActivity, "Top up Success", Toast.LENGTH_SHORT).show()
-                                                        super.onBackPressed()
+                                                        startActivity(
+                                                            Intent(
+                                                                this@PaymentActivity,
+                                                                MainActivity::class.java
+                                                            ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                        )
                                                     }
                                             }, 1000)
                                         }
