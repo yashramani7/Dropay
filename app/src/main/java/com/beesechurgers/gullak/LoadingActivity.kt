@@ -33,9 +33,11 @@ import com.beesechurgers.gullak.ui.theme.backgroundColor
 import com.beesechurgers.gullak.ui.theme.strokeColor
 import com.beesechurgers.gullak.utils.Auth
 import com.beesechurgers.gullak.utils.Auth.oneTapGoogleSignIn
+import com.beesechurgers.gullak.utils.DBConst
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class LoadingActivity : ComponentActivity() {
 
@@ -48,7 +50,12 @@ class LoadingActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (FirebaseAuth.getInstance().currentUser != null) {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+            FirebaseDatabase.getInstance().reference.child(DBConst.USER_KEY).get()
+            FirebaseDatabase.getInstance().reference.child(DBConst.DATA_KEY).child(user.uid).get()
+
             startActivity(Intent(this, MainActivity::class.java))
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             finish()

@@ -104,7 +104,7 @@ object Auth {
                 Log.d(TAG, "handleUserDB: User added")
                 FirebaseDatabase.getInstance().reference.child(DBConst.DATA_KEY).child(user.uid)
                     .updateChildren(HashMap<String, Any>().apply {
-                        this[DBConst.WALLET_KEY] = -1L
+                        this[DBConst.WALLET_KEY] = -1.0
                         this[DBConst.INVESTMENTS_KEY] = HashMap<String, Any>().apply { this[DBConst.TOTAL_INVEST_KEY] = 0 }
                     }).addOnSuccessListener {
                         Log.d(TAG, "handleUserDB: Data added")
