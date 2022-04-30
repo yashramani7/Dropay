@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Gullak" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.Gullak" parent="Theme.Material3.Dark">
         <item name="colorPrimary">@android:color/system_accent1_200</item>
         <item name="colorOnPrimary">@android:color/system_accent1_800</item>
         <item name="colorPrimaryContainer">@android:color/system_accent1_700</item>
