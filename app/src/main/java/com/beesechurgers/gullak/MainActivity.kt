@@ -5,6 +5,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,10 +25,7 @@ import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.beesechurgers.gullak.ui.screen.HomeScreen
+import com.beesechurgers.gullak.ui.screen.InvestmentScreen
 import com.beesechurgers.gullak.ui.theme.*
 import com.beesechurgers.gullak.utils.Prefs
 import com.beesechurgers.gullak.utils.Prefs.getString
@@ -46,6 +48,8 @@ import com.google.firebase.auth.FirebaseAuth
 class MainActivity : ComponentActivity() {
 
     private enum class Screen { HOME, INVESTMENT }
+
+    private var selectedScreen = mutableStateOf(Screen.HOME)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +69,22 @@ class MainActivity : ComponentActivity() {
                     .background(color = backgroundColor()),
                 contentColor = contentColorFor(backgroundColor = backgroundColor()),
                 topBar = { TopBar() },
-                content = { },
+                content = {
+                    AnimatedVisibility(
+                        visible = selectedScreen.value == Screen.HOME,
+                        enter = fadeIn(tween(0)),
+                        exit = fadeOut(tween(500))
+                    ) {
+                        HomeScreen(ctx = this@MainActivity)
+                    }
+                    AnimatedVisibility(
+                        visible = selectedScreen.value == Screen.INVESTMENT,
+                        enter = fadeIn(tween(0)),
+                        exit = fadeOut(tween(500))
+                    ) {
+                        InvestmentScreen(ctx = this@MainActivity)
+                    }
+                },
                 floatingActionButton = {
                     ExtendedFloatingActionButton(
                         onClick = {
@@ -160,7 +179,6 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun BottomBar() {
-        var selectedItem by rememberSaveable { mutableStateOf(Screen.HOME) }
         NavigationBar(
             containerColor = navigationBarColor(this),
             contentColor = contentColorFor(backgroundColor = navigationBarColor(this))
@@ -168,18 +186,18 @@ class MainActivity : ComponentActivity() {
             window.navigationBarColor = navigationBarColor(this@MainActivity).toArgb()
             window.statusBarColor = backgroundColor().toArgb()
             NavigationBarItem(
-                icon = { Icon(if (selectedItem == Screen.HOME) Icons.Filled.Home else Icons.Outlined.Home, "") },
+                icon = { Icon(if (selectedScreen.value == Screen.HOME) Icons.Filled.Home else Icons.Outlined.Home, "") },
                 label = { Text(text = "Home", fontFamily = googleSansFont, fontSize = 14.sp, fontWeight = FontWeight.Bold) },
-                selected = selectedItem == Screen.HOME,
-                onClick = { selectedItem = Screen.HOME },
+                selected = selectedScreen.value == Screen.HOME,
+                onClick = { selectedScreen.value = Screen.HOME },
                 alwaysShowLabel = true
             )
 
             NavigationBarItem(
                 icon = { Icon(painter = painterResource(id = R.drawable.ic_round_trending_up_24), "") },
                 label = { Text(text = "Investment", fontFamily = googleSansFont, fontSize = 14.sp, fontWeight = FontWeight.Bold) },
-                selected = selectedItem == Screen.INVESTMENT,
-                onClick = { selectedItem = Screen.INVESTMENT },
+                selected = selectedScreen.value == Screen.INVESTMENT,
+                onClick = { selectedScreen.value = Screen.INVESTMENT },
                 alwaysShowLabel = true
             )
         }
