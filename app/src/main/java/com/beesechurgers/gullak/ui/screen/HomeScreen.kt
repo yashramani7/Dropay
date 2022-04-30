@@ -78,9 +78,9 @@ fun HomeScreen(ctx: Context) {
                     }
                 ) {
                     Text(
-                        text = if (isWalletSetup) "$walletBalance" else "Setup Wallet",
+                        text = if (isWalletSetup) "₹ $walletBalance" else "Setup Wallet",
                         fontFamily = googleSansFont,
-                        fontSize = 24.sp,
+                        fontSize = if (isWalletSetup) 42.sp else 28.sp,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .padding(56.dp)

@@ -68,4 +68,12 @@ dependencies {
 
     implementation 'com.github.yandextaxitech:binaryprefs:1.0.1'
     implementation 'io.coil-kt:coil-compose:1.4.0'
+
+    // camera x
+    implementation "androidx.camera:camera-camera2:1.1.0-beta03"
+    implementation "androidx.camera:camera-lifecycle:1.1.0-beta03"
+    implementation "androidx.camera:camera-view:1.1.0-beta03"
+
+    // zxing
+    implementation 'com.google.zxing:core:3.4.0'
 }

@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity() {
                 floatingActionButton = {
                     ExtendedFloatingActionButton(
                         onClick = {
-
+                            startActivity(Intent(this, QRScanActivity::class.java))
                         },
                         shape = RoundedCornerShape(24.dp),
                         modifier = Modifier.wrapContentSize(),
