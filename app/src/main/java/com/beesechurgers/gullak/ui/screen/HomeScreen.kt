@@ -1,7 +1,7 @@
 package com.beesechurgers.gullak.ui.screen
 
 import android.content.Context
-import android.widget.Toast
+import android.content.Intent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -11,24 +11,18 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.beesechurgers.gullak.PaymentActivity
 import com.beesechurgers.gullak.R
-import com.beesechurgers.gullak.ui.theme.GullakTheme
-import com.beesechurgers.gullak.ui.theme.backgroundColor
-import com.beesechurgers.gullak.ui.theme.googleSansFont
-import com.beesechurgers.gullak.ui.theme.strokeColor
-import com.beesechurgers.gullak.utils.DBConst
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.beesechurgers.gullak.ui.theme.*
+import com.beesechurgers.gullak.utils.DBListeners
+import com.beesechurgers.gullak.utils.DBListeners.isWalletSetup
+import com.beesechurgers.gullak.utils.DBListeners.walletBalance
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,19 +30,7 @@ fun HomeScreen(ctx: Context) {
     val descList = listOf("Pay to\nUPI ID", "Bank Transfer", "Pay contacts")
     val iconList = listOf(R.drawable.ic_upi_transfer, R.drawable.ic_round_account_balance_24, R.drawable.ic_round_account_circle_24)
 
-    var isWalletSetup by rememberSaveable { mutableStateOf(false) }
-    var walletBalance by rememberSaveable { mutableStateOf(-1.0) }
-
-    val user = FirebaseAuth.getInstance().currentUser
-    if (user != null) {
-        FirebaseDatabase.getInstance().reference.child(DBConst.DATA_KEY).child(user.uid).get().addOnSuccessListener {
-            val rB = it.child(DBConst.WALLET_KEY).value
-            if (rB != null) {
-                walletBalance = rB.toString().toDouble()
-                isWalletSetup = walletBalance != -1.0
-            }
-        }
-    }
+    DBListeners.enableWalletListener()
 
     GullakTheme(ctx) {
         Surface(
@@ -70,17 +52,17 @@ fun HomeScreen(ctx: Context) {
                         .animateContentSize(),
                     containerColor = backgroundColor(),
                     contentColor = contentColorFor(backgroundColor = backgroundColor()),
-                    border = if (isWalletSetup) null else BorderStroke(1.dp, strokeColor()),
+                    border = if (isWalletSetup.value) null else BorderStroke(1.dp, strokeColor()),
                     shape = RoundedCornerShape(24.dp),
                     onClick = {
-                        if (isWalletSetup) return@Card
-                        Toast.makeText(ctx, "Wallet", Toast.LENGTH_SHORT).show()
+                        if (isWalletSetup.value) return@Card
+                        ctx.startActivity(Intent(ctx, PaymentActivity::class.java))
                     }
                 ) {
                     Text(
-                        text = if (isWalletSetup) "₹ $walletBalance" else "Setup Wallet",
-                        fontFamily = googleSansFont,
-                        fontSize = if (isWalletSetup) 42.sp else 28.sp,
+                        text = if (isWalletSetup.value) "₹ ${walletBalance.value}" else "Setup Wallet",
+                        fontFamily = if (isWalletSetup.value) monoFont else googleSansFont,
+                        fontSize = if (isWalletSetup.value) 42.sp else 28.sp,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
                             .padding(56.dp)

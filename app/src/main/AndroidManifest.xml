@@ -29,6 +29,14 @@
             android:name=".QRScanActivity"
             android:exported="false"
             android:theme="@style/Theme.Gullak" />
+        <activity
+            android:name=".DummyUPIScreen"
+            android:exported="false"
+            android:theme="@style/Theme.Gullak" />
+        <activity
+            android:name=".PaymentActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Gullak" />
     </application>
 
 </manifest>
