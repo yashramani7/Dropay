@@ -34,6 +34,7 @@ import com.beesechurgers.gullak.ui.theme.backgroundColor
 import com.beesechurgers.gullak.ui.theme.googleSansFont
 import com.beesechurgers.gullak.ui.theme.monoFont
 import com.beesechurgers.gullak.utils.DBConst
+import com.beesechurgers.gullak.utils.DBListeners
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.delay
@@ -106,7 +107,7 @@ class SetupPortfolioActivity : ComponentActivity() {
                                     modifier = Modifier.padding(top = 8.dp)
                                 )
 
-                                var sliderPosition by remember { mutableStateOf(0f) }
+                                var sliderPosition by remember { mutableStateOf(DBListeners.riskFactor.value * 50f) }
                                 Slider(
                                     value = sliderPosition,
                                     onValueChange = { sliderPosition = it },
@@ -139,7 +140,7 @@ class SetupPortfolioActivity : ComponentActivity() {
 
                                 val bringInView = BringIntoViewRequester()
                                 val coroutineScope = rememberCoroutineScope()
-                                var percentage by rememberSaveable { mutableStateOf("0.0") }
+                                var percentage by rememberSaveable { mutableStateOf(DBListeners.percentageInvest.value.toString()) }
                                 OutlinedTextField(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -179,8 +180,8 @@ class SetupPortfolioActivity : ComponentActivity() {
                                         .align(Alignment.End)
                                         .padding(top = 16.dp)
                                 ) {
-                                    Icon(Icons.Rounded.ArrowForward, contentDescription = "", modifier = Modifier.padding(end = 8.dp))
-                                    Text(text = "Get Started", fontFamily = googleSansFont)
+                                    Text(text = "Done", fontFamily = googleSansFont)
+                                    Icon(Icons.Rounded.ArrowForward, contentDescription = "", modifier = Modifier.padding(start = 8.dp))
                                 }
                             }
                         }

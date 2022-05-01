@@ -23,7 +23,10 @@ object DBListeners {
     private var isListenerAssigned = false
     var isWalletSetup = mutableStateOf(false)
     var walletBalance = mutableStateOf(-1.0)
+
     var investmentCount = mutableStateOf(0)
+    var percentageInvest = mutableStateOf(0f)
+    var riskFactor = mutableStateOf(0)
 
     fun enableWalletListener() {
         if (isListenerAssigned) return
@@ -41,7 +44,9 @@ object DBListeners {
                         }
 
                         investmentCount.value =
-                            snapshot.child(DBConst.INVESTMENTS_KEY).child(DBConst.TOTAL_INVEST_KEY).value.toString().toInt()
+                            snapshot.child(DBConst.INVESTMENTS_KEY).child(DBConst.TOTAL_INVEST_KEY).value?.toString()?.toInt() ?: 0
+                        percentageInvest.value = snapshot.child(DBConst.PERCENTAGE_KEY).value?.toString()?.toFloat() ?: 0f
+                        riskFactor.value = snapshot.child(DBConst.RISK_KEY).value?.toString()?.toInt() ?: 0
                     }
 
                     override fun onCancelled(error: DatabaseError) = Unit

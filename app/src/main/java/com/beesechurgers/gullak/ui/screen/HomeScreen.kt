@@ -30,8 +30,6 @@ fun HomeScreen(ctx: Context) {
     val descList = listOf("Pay to\nUPI ID", "Bank Transfer", "Pay contacts")
     val iconList = listOf(R.drawable.ic_upi_transfer, R.drawable.ic_round_account_balance_24, R.drawable.ic_round_account_circle_24)
 
-    DBListeners.enableWalletListener()
-
     GullakTheme(ctx) {
         Surface(
             modifier = Modifier

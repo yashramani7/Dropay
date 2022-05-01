@@ -40,6 +40,7 @@ import coil.transform.CircleCropTransformation
 import com.beesechurgers.gullak.ui.screen.HomeScreen
 import com.beesechurgers.gullak.ui.screen.InvestmentScreen
 import com.beesechurgers.gullak.ui.theme.*
+import com.beesechurgers.gullak.utils.DBListeners
 import com.beesechurgers.gullak.utils.Prefs
 import com.beesechurgers.gullak.utils.Prefs.getString
 import com.google.firebase.auth.FirebaseAuth
@@ -53,6 +54,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        DBListeners.enableWalletListener()
+
         setContent {
             window.statusBarColor = backgroundColor().toArgb()
             MainScreen()
