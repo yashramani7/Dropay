@@ -32,7 +32,10 @@ import com.beesechurgers.gullak.ui.theme.GullakTheme
 import com.beesechurgers.gullak.ui.theme.backgroundColor
 import com.beesechurgers.gullak.ui.theme.googleSansFont
 import com.beesechurgers.gullak.ui.theme.monoFont
+import com.beesechurgers.gullak.utils.DBConst
 import com.beesechurgers.gullak.utils.DBListeners
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 @OptIn(ExperimentalMaterial3Api::class)
 class TransactionPaymentActivity : ComponentActivity() {
@@ -170,6 +173,7 @@ class TransactionPaymentActivity : ComponentActivity() {
                                     val upiLauncher = rememberLauncherForActivityResult(
                                         contract = ActivityResultContracts.StartActivityForResult(),
                                         onResult = {
+                                            val user = FirebaseAuth.getInstance().currentUser?: return@rememberLauncherForActivityResult
                                             val intent = it.data ?: return@rememberLauncherForActivityResult
 
                                             val extra = intent.extras ?: return@rememberLauncherForActivityResult
@@ -177,6 +181,13 @@ class TransactionPaymentActivity : ComponentActivity() {
                                                 Toast.makeText(this@TransactionPaymentActivity, "Payment Cancelled", Toast.LENGTH_SHORT)
                                                     .show()
                                             } else {
+                                                FirebaseDatabase.getInstance().reference.child(DBConst.HISTORY_KEY).child(user.uid)
+                                                    .child(System.currentTimeMillis().toString())
+                                                    .updateChildren(HashMap<String, Any>().apply {
+                                                        this[DBConst.AMOUNT_KEY] = amount.toDouble()
+                                                        this[DBConst.PAYMENT_DESC_KEY] = title
+                                                    })
+
                                                 Toast.makeText(this@TransactionPaymentActivity, "Payment Success", Toast.LENGTH_SHORT)
                                                     .show()
                                             }

@@ -10,12 +10,16 @@ import com.google.firebase.database.ValueEventListener
 object DBConst {
     const val USER_KEY = "Users"
     const val DATA_KEY = "Data"
+    const val HISTORY_KEY = "History"
 
     const val WALLET_KEY = "Wallet_balance"
     const val INVESTMENTS_KEY = "Investments"
     const val TOTAL_INVEST_KEY = "Total_Invest"
     const val RISK_KEY = "risk_factor"
     const val PERCENTAGE_KEY = "percentage_amount"
+
+    const val AMOUNT_KEY = "amount"
+    const val PAYMENT_DESC_KEY = "payment_desc"
 }
 
 object DBListeners {

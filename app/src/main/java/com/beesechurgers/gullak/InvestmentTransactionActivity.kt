@@ -172,12 +172,20 @@ class InvestmentTransactionActivity : ComponentActivity() {
                                                     ).show()
                                                     return@OutlinedButton
                                                 }
+
                                                 FirebaseDatabase.getInstance().reference.child(DBConst.DATA_KEY).child(user.uid)
                                                     .updateChildren(HashMap<String, Any>().apply {
                                                         this[DBConst.WALLET_KEY] = DBListeners.walletBalance.value - deductAmount
                                                         this[DBConst.INVESTMENTS_KEY] = HashMap<String, Any>().apply {
                                                             this[DBConst.TOTAL_INVEST_KEY] = DBListeners.investmentCount.value + 1
                                                         }
+                                                    })
+
+                                                FirebaseDatabase.getInstance().reference.child(DBConst.HISTORY_KEY).child(user.uid)
+                                                    .child(System.currentTimeMillis().toString())
+                                                    .updateChildren(HashMap<String, Any>().apply {
+                                                        this[DBConst.AMOUNT_KEY] = deductAmount.toDouble()
+                                                        this[DBConst.PAYMENT_DESC_KEY] = title
                                                     })
                                                 Toast.makeText(this@InvestmentTransactionActivity, "Payment Success", Toast.LENGTH_SHORT)
                                                     .show()
@@ -197,9 +205,17 @@ class InvestmentTransactionActivity : ComponentActivity() {
                                                     ).show()
                                                     return@OutlinedButton
                                                 }
+
                                                 FirebaseDatabase.getInstance().reference.child(DBConst.DATA_KEY).child(user.uid)
                                                     .updateChildren(HashMap<String, Any>().apply {
                                                         this[DBConst.WALLET_KEY] = DBListeners.walletBalance.value - deductAmount
+                                                    })
+
+                                                FirebaseDatabase.getInstance().reference.child(DBConst.HISTORY_KEY).child(user.uid)
+                                                    .child(System.currentTimeMillis().toString())
+                                                    .updateChildren(HashMap<String, Any>().apply {
+                                                        this[DBConst.AMOUNT_KEY] = deductAmount
+                                                        this[DBConst.PAYMENT_DESC_KEY] = title
                                                     })
                                                 Toast.makeText(this@InvestmentTransactionActivity, "Payment Success", Toast.LENGTH_SHORT)
                                                     .show()

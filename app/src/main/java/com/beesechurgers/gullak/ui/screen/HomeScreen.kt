@@ -2,6 +2,7 @@ package com.beesechurgers.gullak.ui.screen
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -20,7 +21,6 @@ import androidx.compose.ui.unit.sp
 import com.beesechurgers.gullak.PaymentActivity
 import com.beesechurgers.gullak.R
 import com.beesechurgers.gullak.ui.theme.*
-import com.beesechurgers.gullak.utils.DBListeners
 import com.beesechurgers.gullak.utils.DBListeners.isWalletSetup
 import com.beesechurgers.gullak.utils.DBListeners.walletBalance
 
@@ -50,7 +50,7 @@ fun HomeScreen(ctx: Context) {
                         .animateContentSize(),
                     containerColor = backgroundColor(),
                     contentColor = contentColorFor(backgroundColor = backgroundColor()),
-                    border = if (isWalletSetup.value) null else BorderStroke(1.dp, strokeColor()),
+                    border = BorderStroke(1.dp, strokeColor()),
                     shape = RoundedCornerShape(24.dp),
                     onClick = {
                         ctx.startActivity(Intent(ctx, PaymentActivity::class.java))
@@ -64,6 +64,20 @@ fun HomeScreen(ctx: Context) {
                             .align(Alignment.CenterHorizontally)
                             .padding(56.dp)
                     )
+
+                    AnimatedVisibility(
+                        visible = isWalletSetup.value, modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                    ) {
+                        Text(
+                            text = "Tap to top-up",
+                            fontFamily = googleSansFont,
+                            fontSize = 16.sp,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .padding(bottom = 16.dp)
+                        )
+                    }
                 }
 
                 LazyRow(

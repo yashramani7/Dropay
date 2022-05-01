@@ -124,8 +124,17 @@ class PaymentActivity : ComponentActivity() {
                                             Handler(mainLooper).postDelayed({
                                                 FirebaseDatabase.getInstance().reference.child(DBConst.DATA_KEY).child(user.uid)
                                                     .updateChildren(HashMap<String, Any>().apply {
-                                                        this[DBConst.WALLET_KEY] = DBListeners.walletBalance.value + amount.toDouble()
+                                                        this[DBConst.WALLET_KEY] =
+                                                            (if (DBListeners.walletBalance.value == -1.0) 0.0 else DBListeners.walletBalance.value) + amount.toDouble()
                                                     }).addOnSuccessListener {
+
+                                                        FirebaseDatabase.getInstance().reference.child(DBConst.HISTORY_KEY).child(user.uid)
+                                                            .child(System.currentTimeMillis().toString())
+                                                            .updateChildren(HashMap<String, Any>().apply {
+                                                                this[DBConst.AMOUNT_KEY] = amount.toDouble()
+                                                                this[DBConst.PAYMENT_DESC_KEY] = "Gullak Wallet Top-up"
+                                                            })
+
                                                         Toast.makeText(this@PaymentActivity, "Top up Success", Toast.LENGTH_SHORT).show()
                                                         startActivity(
                                                             Intent(
