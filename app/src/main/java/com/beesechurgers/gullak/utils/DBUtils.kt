@@ -14,7 +14,8 @@ object DBConst {
 
     const val WALLET_KEY = "Wallet_balance"
     const val INVESTMENTS_KEY = "Investments"
-    const val TOTAL_INVEST_KEY = "Total_Invest"
+    const val INVESTED_FUNDS_KEY = "Invested_Funds"
+    const val PENDING_INVESTED_FUNDS = "Pending_Funds"
     const val RISK_KEY = "risk_factor"
     const val PERCENTAGE_KEY = "percentage_amount"
 
@@ -27,8 +28,9 @@ object DBListeners {
     private var isListenerAssigned = false
     var isWalletSetup = mutableStateOf(false)
     var walletBalance = mutableStateOf(-1.0)
+    var investedFunds = mutableStateOf(0.0)
+    var pendingInvestedFunds = mutableStateOf(0.0)
 
-    var investmentCount = mutableStateOf(0)
     var percentageInvest = mutableStateOf(0f)
     var riskFactor = mutableStateOf(0)
 
@@ -47,8 +49,12 @@ object DBListeners {
                             isWalletSetup.value = walletBalance.value != -1.0
                         }
 
-                        investmentCount.value =
-                            snapshot.child(DBConst.INVESTMENTS_KEY).child(DBConst.TOTAL_INVEST_KEY).value?.toString()?.toInt() ?: 0
+                        investedFunds.value =
+                            snapshot.child(DBConst.INVESTMENTS_KEY).child(DBConst.INVESTED_FUNDS_KEY).value?.toString()?.toDouble() ?: 0.0
+                        pendingInvestedFunds.value =
+                            snapshot.child(DBConst.INVESTMENTS_KEY).child(DBConst.PENDING_INVESTED_FUNDS).value?.toString()?.toDouble()
+                                ?: 0.0
+
                         percentageInvest.value = snapshot.child(DBConst.PERCENTAGE_KEY).value?.toString()?.toFloat() ?: 0f
                         riskFactor.value = snapshot.child(DBConst.RISK_KEY).value?.toString()?.toInt() ?: 0
                     }

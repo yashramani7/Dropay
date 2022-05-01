@@ -108,7 +108,10 @@ object Auth {
                         this[DBConst.WALLET_KEY] = -1.0
                         this[DBConst.PERCENTAGE_KEY] = 0f
                         this[DBConst.RISK_KEY] = 0
-                        this[DBConst.INVESTMENTS_KEY] = HashMap<String, Any>().apply { this[DBConst.TOTAL_INVEST_KEY] = 0 }
+                        this[DBConst.INVESTMENTS_KEY] = HashMap<String, Any>().apply {
+                            this[DBConst.INVESTED_FUNDS_KEY] = 0
+                            this[DBConst.PENDING_INVESTED_FUNDS] = 0
+                        }
                     }).addOnSuccessListener {
                         Log.d(TAG, "handleUserDB: Data added")
                         isLoading.value = false

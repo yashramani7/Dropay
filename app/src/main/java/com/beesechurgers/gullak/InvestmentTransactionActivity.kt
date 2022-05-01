@@ -164,6 +164,7 @@ class InvestmentTransactionActivity : ComponentActivity() {
                                             if (investChecked) {
                                                 val deductAmount =
                                                     paymentAmount.toFloat() + ((percentInvest.value / 100f) * paymentAmount.toFloat())
+                                                val percentageAmount = (percentInvest.value / 100f) * paymentAmount.toFloat()
                                                 if (DBListeners.walletBalance.value - deductAmount.toDouble() < 0.0) {
                                                     Toast.makeText(
                                                         this@InvestmentTransactionActivity,
@@ -176,9 +177,12 @@ class InvestmentTransactionActivity : ComponentActivity() {
                                                 FirebaseDatabase.getInstance().reference.child(DBConst.DATA_KEY).child(user.uid)
                                                     .updateChildren(HashMap<String, Any>().apply {
                                                         this[DBConst.WALLET_KEY] = DBListeners.walletBalance.value - deductAmount
-                                                        this[DBConst.INVESTMENTS_KEY] = HashMap<String, Any>().apply {
-                                                            this[DBConst.TOTAL_INVEST_KEY] = DBListeners.investmentCount.value + 1
-                                                        }
+                                                    })
+                                                FirebaseDatabase.getInstance().reference.child(DBConst.DATA_KEY).child(user.uid)
+                                                    .child(DBConst.INVESTMENTS_KEY)
+                                                    .updateChildren(HashMap<String, Any>().apply {
+                                                        this[DBConst.PENDING_INVESTED_FUNDS] =
+                                                            DBListeners.pendingInvestedFunds.value + percentageAmount.toDouble()
                                                     })
 
                                                 FirebaseDatabase.getInstance().reference.child(DBConst.HISTORY_KEY).child(user.uid)
