@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -165,6 +167,28 @@ class TransactionPaymentActivity : ComponentActivity() {
                                         }
                                     }
 
+                                    val upiLauncher = rememberLauncherForActivityResult(
+                                        contract = ActivityResultContracts.StartActivityForResult(),
+                                        onResult = {
+                                            val intent = it.data ?: return@rememberLauncherForActivityResult
+
+                                            val extra = intent.extras ?: return@rememberLauncherForActivityResult
+                                            if (!extra.getBoolean("success", false)) {
+                                                Toast.makeText(this@TransactionPaymentActivity, "Payment Cancelled", Toast.LENGTH_SHORT)
+                                                    .show()
+                                            } else {
+                                                Toast.makeText(this@TransactionPaymentActivity, "Payment Success", Toast.LENGTH_SHORT)
+                                                    .show()
+                                            }
+                                            startActivity(
+                                                Intent(
+                                                    this@TransactionPaymentActivity,
+                                                    MainActivity::class.java
+                                                ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            )
+                                        }
+                                    )
+
                                     OutlinedButton(
                                         onClick = {
                                             if (selectedOption == "Wallet") {
@@ -175,7 +199,13 @@ class TransactionPaymentActivity : ComponentActivity() {
                                                     ).putExtra("_amount", amount)
                                                 )
                                             } else {
-
+                                                upiLauncher.launch(
+                                                    Intent(
+                                                        this@TransactionPaymentActivity,
+                                                        DummyUPIScreen::class.java
+                                                    ).putExtra("_to", title)
+                                                        .putExtra("_amount", amount.toDouble())
+                                                )
                                             }
                                         }, modifier = Modifier
                                             .align(Alignment.End)
