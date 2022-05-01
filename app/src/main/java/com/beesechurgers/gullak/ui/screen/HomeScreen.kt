@@ -55,12 +55,11 @@ fun HomeScreen(ctx: Context) {
                     border = if (isWalletSetup.value) null else BorderStroke(1.dp, strokeColor()),
                     shape = RoundedCornerShape(24.dp),
                     onClick = {
-                        if (isWalletSetup.value) return@Card
                         ctx.startActivity(Intent(ctx, PaymentActivity::class.java))
                     }
                 ) {
                     Text(
-                        text = if (isWalletSetup.value) "₹ ${walletBalance.value}" else "Setup Wallet",
+                        text = if (isWalletSetup.value) "₹ ${String.format("%.2f", walletBalance.value)}" else "Setup Wallet",
                         fontFamily = if (isWalletSetup.value) monoFont else googleSansFont,
                         fontSize = if (isWalletSetup.value) 42.sp else 28.sp,
                         modifier = Modifier

@@ -1,5 +1,6 @@
 package com.beesechurgers.gullak
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -103,7 +104,7 @@ class TransactionPaymentActivity : ComponentActivity() {
                                         fontFamily = googleSansFont,
                                         fontSize = 20.sp,
                                         modifier = Modifier
-                                            .padding(bottom = 24.dp, start = 24.dp)
+                                            .padding(bottom = 16.dp, start = 24.dp)
                                     )
 
                                     var amount by rememberSaveable { mutableStateOf(paymentAmount) }
@@ -166,6 +167,16 @@ class TransactionPaymentActivity : ComponentActivity() {
 
                                     OutlinedButton(
                                         onClick = {
+                                            if (selectedOption == "Wallet") {
+                                                startActivity(
+                                                    Intent(
+                                                        this@TransactionPaymentActivity,
+                                                        InvestmentTransactionActivity::class.java
+                                                    ).putExtra("_amount", amount)
+                                                )
+                                            } else {
+
+                                            }
                                         }, modifier = Modifier
                                             .align(Alignment.End)
                                             .padding(top = 16.dp, end = 24.dp)

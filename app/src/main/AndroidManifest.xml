@@ -46,6 +46,10 @@
             android:name=".TransactionPaymentActivity"
             android:exported="false"
             android:theme="@style/Theme.Gullak" />
+        <activity
+            android:name=".InvestmentTransactionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Gullak" />
     </application>
 
 </manifest>

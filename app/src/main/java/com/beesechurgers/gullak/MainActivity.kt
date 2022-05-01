@@ -126,9 +126,7 @@ class MainActivity : ComponentActivity() {
                     .align(Alignment.CenterVertically)
                     .padding(start = 8.dp)
                     .clickable {
-                        Toast
-                            .makeText(this@MainActivity, "Settings", Toast.LENGTH_SHORT)
-                            .show()
+                        startActivity(Intent(this@MainActivity, SetupPortfolioActivity::class.java))
                     }
                     .clip(RoundedCornerShape(24.dp))
                     .border(1.dp, strokeColor(), RoundedCornerShape(8.dp)), shape = RoundedCornerShape(8.dp)

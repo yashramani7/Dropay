@@ -37,6 +37,7 @@ import com.beesechurgers.gullak.ui.theme.backgroundColor
 import com.beesechurgers.gullak.ui.theme.googleSansFont
 import com.beesechurgers.gullak.ui.theme.monoFont
 import com.beesechurgers.gullak.utils.DBConst
+import com.beesechurgers.gullak.utils.DBListeners
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
@@ -64,7 +65,7 @@ class PaymentActivity : ComponentActivity() {
                             contentColor = contentColorFor(backgroundColor = backgroundColor()),
                         ) {
                             Text(
-                                text = "Setup Wallet",
+                                text = "Top-up Wallet",
                                 fontFamily = googleSansFont,
                                 fontSize = 28.sp,
                                 modifier = Modifier.padding(start = 40.dp, top = 40.dp)
@@ -123,7 +124,7 @@ class PaymentActivity : ComponentActivity() {
                                             Handler(mainLooper).postDelayed({
                                                 FirebaseDatabase.getInstance().reference.child(DBConst.DATA_KEY).child(user.uid)
                                                     .updateChildren(HashMap<String, Any>().apply {
-                                                        this[DBConst.WALLET_KEY] = amount.toDouble()
+                                                        this[DBConst.WALLET_KEY] = DBListeners.walletBalance.value + amount.toDouble()
                                                     }).addOnSuccessListener {
                                                         Toast.makeText(this@PaymentActivity, "Top up Success", Toast.LENGTH_SHORT).show()
                                                         startActivity(

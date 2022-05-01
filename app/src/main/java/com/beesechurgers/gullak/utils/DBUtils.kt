@@ -23,6 +23,7 @@ object DBListeners {
     private var isListenerAssigned = false
     var isWalletSetup = mutableStateOf(false)
     var walletBalance = mutableStateOf(-1.0)
+    var investmentCount = mutableStateOf(0)
 
     fun enableWalletListener() {
         if (isListenerAssigned) return
@@ -38,6 +39,9 @@ object DBListeners {
                             walletBalance.value = rB.toString().toDouble()
                             isWalletSetup.value = walletBalance.value != -1.0
                         }
+
+                        investmentCount.value =
+                            snapshot.child(DBConst.INVESTMENTS_KEY).child(DBConst.TOTAL_INVEST_KEY).value.toString().toInt()
                     }
 
                     override fun onCancelled(error: DatabaseError) = Unit
